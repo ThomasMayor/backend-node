@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "emitDecoratorMetadata": false,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "experimentalDecorators": true,
+    "noUnusedLocals": false,
+    "lib": ["es2017", "dom"],
+    "outDir": "./dist",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": false,
+    "target": "es2017",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "strict": true
+  },
+  "include": [
+      "**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "e2e",
+    "**/*.spec.ts",
+    "**/*.e2e.ts",
+    "dist/**"
+  ],
+  "compileOnSave": false
+}
