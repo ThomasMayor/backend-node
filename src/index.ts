@@ -56,6 +56,14 @@ const privateHandler = (req, res) => {
 };
 apiRouter.get('/private', authMiddleware, privateHandler);
 
+const debugHandler = (req, res) => {
+  // tslint:disable-next-line:no-debugger
+  debugger;
+  res.send({});
+};
+apiRouter.get('/debug', debugHandler);
+
+
 // auth routes
 apiRouter.use('/auth', authRouter);
 
