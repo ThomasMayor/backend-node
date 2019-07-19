@@ -1,0 +1,18 @@
+version: '3'
+services:
+  backend:
+    build: .
+    ports:
+      - "8080:8080"
+    networks:
+      nomadesnet:
+        ipv4_address:  172.19.0.2
+    env_file:
+      - .env
+
+networks:
+  nomadesnet:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.19.0.0/16

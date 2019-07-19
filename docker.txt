@@ -1,0 +1,27 @@
+
+Commandes docker:
+=================
+
+- docker ps -> liste les container
+- docker images -> liste les images
+
+
+- docker network create --subnet=172.19.0.0/16 [network name]
+
+- docker build -t [tag name] .
+
+- docker run -ti --net [network name] --name [container name] [tag name]
+
+- docker exec -ti [container name] [command] -> exécute une commande dans le containeur
+
+- docker stop [container name]
+
+
+
+Commandes docker-compose:
+=========================
+
+- docker-compose build
+- docker-compose build [service name]
+- docker-compose build --no-cache
+- docker-compose up
