@@ -16,8 +16,8 @@ import { notFoundMiddleware, errorMiddleware } from './middlewares/error';
 dotenv.config();
 
 
-const PORT = +process.env.EXPRESS_PORT;
-const HOST = process.env.EXPRESS_HOST;
+const PORT = +process.env.PORT || +process.env.EXPRESS_PORT;
+const HOST = process.env.HOST || process.env.EXPRESS_HOST;
 
 // APP
 const app = express();

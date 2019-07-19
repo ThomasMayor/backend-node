@@ -25,3 +25,20 @@ Commandes docker-compose:
 - docker-compose build [service name]
 - docker-compose build --no-cache
 - docker-compose up
+
+
+
+Heroku CLI:
+===========
+
+DEPUIS VOTRE DOSSIER DU PROJET !!!
+
+- heroku login (une seule fois)
+- heroku container:login (une seule fois)
+- heroku create <nom app>
+- heroku container:push <npm repo> [-a <nom app>]
+- heroku container:release <nom repo>
+- heroku open
+
+En cas d'erreur "no web process running"
+- heroku ps:scale web=1
