@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "tsc -w & nodemon dist/index.js",
     "debug": "tsc && node --inspect dist/index.js",
-    "docker": "npm install && tsc && docker-compose build && docker-compose up"
+    "docker": "tsc && docker-compose build && docker-compose up"
   },
   "author": "",
   "license": "ISC",

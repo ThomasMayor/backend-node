@@ -11,6 +11,7 @@ services:
       - .env
     depends_on:
       - mongo
+    restart: always
 
   mongo:
     image: mongo:4.0.4

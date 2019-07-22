@@ -83,7 +83,7 @@ database
 
   // HTTP REQUEST ERRORS
   app.use(errorMiddleware)
-    .use(notFoundMiddleware);
+     .use(notFoundMiddleware);
 
   // RUN EXPRESS SERVER
   const server = app.listen(PORT, HOST);
