@@ -9,6 +9,18 @@ services:
         ipv4_address:  172.19.0.2
     env_file:
       - .env
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:4.0.4
+    volumes:
+      - ~/mongo/data:/data/db
+    ports:
+      - "27017-27019:27017-27019"
+    networks:
+      nomadesnet:
+        ipv4_address: 172.19.0.3
 
 networks:
   nomadesnet:
