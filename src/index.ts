@@ -11,6 +11,7 @@ import { authMiddleware } from './middlewares/auth';
 import { authRouter } from './routers/auth';
 import * as dotenv from 'dotenv';
 import { notFoundMiddleware, errorMiddleware } from './middlewares/error';
+import { Database } from './database';
 
 // load .env variables into process.env
 dotenv.config();
@@ -19,92 +20,111 @@ dotenv.config();
 const PORT = +process.env.PORT || +process.env.EXPRESS_PORT;
 const HOST = process.env.HOST || process.env.EXPRESS_HOST;
 
-// APP
-const app = express();
+const MONGO_URI = process.env.MONGO_URI;
+const MONGO_USER = process.env.MONGO_USER;
+const MONGO_PASSWORD = process.env.MONGO_PASSWORD;
 
-// MIDDLEWARES
-   // use bodyParser to parse json
-app.use(bodyParser.json())
-   // use Helmet to help secure Express apps with various HTTP headers
-   .use(helmet())
-   // use morgan to log requests to the console
-   .use(morgan('dev'))
-   // use HPP to protect against HTTP Parameter Pollution attacks
-   .use(hpp())
-   // enable gzip compression
-   .use(compress())
-   // cors domaine origin
-   .use(cors({optionsSuccessStatus: 200}))
-   // parse cookies
-   .use(cookieParser());
+const database: Database = new Database(MONGO_URI, MONGO_USER, MONGO_PASSWORD);
+database
+.connect()
+.then(_ => {
+  // APP
+  const app = express();
 
-
-// ROUTES
-const apiRouter = express.Router();
-app.use('/api/v1', apiRouter);
-
-// main routes
-const rootHandler = (req, res) => {
-  console.log('root route');
-  res.send({ message: 'Welcome to my API' });
-};
-apiRouter.get('/', rootHandler);
-
-const privateHandler = (req, res) => {
-  console.log('private route');
-  res.send({ message: 'Welcome to private API' });
-};
-apiRouter.get('/private', authMiddleware, privateHandler);
-
-const debugHandler = (req, res) => {
-  // tslint:disable-next-line:no-debugger
-  debugger;
-  res.send({});
-};
-apiRouter.get('/debug', debugHandler);
+  // MIDDLEWARES
+    // use bodyParser to parse json
+  app.use(bodyParser.json())
+    // use Helmet to help secure Express apps with various HTTP headers
+    .use(helmet())
+    // use morgan to log requests to the console
+    .use(morgan('dev'))
+    // use HPP to protect against HTTP Parameter Pollution attacks
+    .use(hpp())
+    // enable gzip compression
+    .use(compress())
+    // cors domaine origin
+    .use(cors({optionsSuccessStatus: 200}))
+    // parse cookies
+    .use(cookieParser());
 
 
-// auth routes
-apiRouter.use('/auth', authRouter);
+  // ROUTES
+  const apiRouter = express.Router();
+  app.use('/api/v1', apiRouter);
 
-// other routes
-// apiRouter.use('/user', userRouter);
-// ...
+  // main routes
+  const rootHandler = (req, res) => {
+    console.log('root route');
+    res.send({ message: 'Welcome to my API' });
+  };
+  apiRouter.get('/', rootHandler);
+
+  const privateHandler = (req, res) => {
+    console.log('private route');
+    res.send({ message: 'Welcome to private API' });
+  };
+  apiRouter.get('/private', authMiddleware, privateHandler);
+
+  const debugHandler = (req, res) => {
+    // tslint:disable-next-line:no-debugger
+    debugger;
+    res.send({});
+  };
+  apiRouter.get('/debug', debugHandler);
 
 
-// HTTP REQUEST ERRORS
-app.use(errorMiddleware)
-   .use(notFoundMiddleware);
+  // auth routes
+  apiRouter.use('/auth', authRouter);
 
-// RUN EXPRESS SERVER
-const server = app.listen(PORT, HOST);
+  // other routes
+  // apiRouter.use('/user', userRouter);
+  // ...
 
-// EXPRESS SERVER ERRORS
-server.on('error', (err: any) => {
-  switch (err.code) {
-     case 'EACCES':
-        console.error(`${HOST}:${PORT} requires elevated privileges`);
-        break;
-     case 'EADDRINUSE':
-        console.error(`${HOST}:${PORT} is already in use`);
-        break;
-     default:
-        console.error('Error connecting ' + err);
-        break;
-  }
+
+  // HTTP REQUEST ERRORS
+  app.use(errorMiddleware)
+    .use(notFoundMiddleware);
+
+  // RUN EXPRESS SERVER
+  const server = app.listen(PORT, HOST);
+
+  // EXPRESS SERVER ERRORS
+  server.on('error', (err: any) => {
+    switch (err.code) {
+      case 'EACCES':
+          console.error(`${HOST}:${PORT} requires elevated privileges`);
+          break;
+      case 'EADDRINUSE':
+          console.error(`${HOST}:${PORT} is already in use`);
+          break;
+      default:
+          console.error('Error connecting ' + err);
+          break;
+    }
+    closeServer()
+      .then(_ => process.exit(1))
+      .catch(_ => process.exit(1));
+  });
+  server.on('listening', () => {
+    console.log(`Server listening on ${HOST}:${PORT}`);
+  });
+
+  // PROCESS EVENTS
+  // gracefully stop the server in case of SIGINT (Ctrl + C) or SIGTERM (Process stopped)
+  const closeServer = () => {
+    console.log('close express server');
+    server.close();
+    // manager database connection
+    console.log('disconnect mongo');
+    return database.disconnect();
+  };
+
+  process.on('SIGTERM', closeServer);
+  process.on('SIGINT', closeServer);
+
+})
+.catch(err => {
+  console.error('Database connection error');
+  console.error(err);
   process.exit(1);
 });
-
-
-// PROCESS EVENTS
-// gracefully stop the server in case of SIGINT (Ctrl + C) or SIGTERM (Process stopped)
-const closeServer = () => {
-  console.log('closeServer');
-  server.close();
-  // manager database connection
-  // ...
-};
-process.on('SIGTERM', closeServer);
-process.on('SIGINT', closeServer);
-
-console.log(`Server listening on ${HOST}:${PORT}`);

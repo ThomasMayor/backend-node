@@ -6,7 +6,7 @@ services:
       - "8080:8080"
     networks:
       nomadesnet:
-        ipv4_address:  172.19.0.2
+        ipv4_address: 172.19.0.2
     env_file:
       - .env
     depends_on:
