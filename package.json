@@ -5,9 +5,10 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc -w & nodemon dist/index.js",
+    "dev": "tsc -w & nodemon dist/index.js",
     "debug": "tsc && node --inspect dist/index.js",
-    "docker": "tsc && docker-compose build && docker-compose up"
+    "docker": "tsc && docker-compose build && docker-compose up",
+    "deploy": "tsc && docker-compose build backend && heroku container:push web && heroku container:release web"
   },
   "author": "",
   "license": "ISC",
