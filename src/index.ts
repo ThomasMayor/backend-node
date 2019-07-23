@@ -7,15 +7,13 @@ import * as hpp from 'hpp';
 import * as cors from 'cors';
 import * as compress from 'compression';
 import * as cookieParser from 'cookie-parser';
-import { authMiddleware } from './middlewares/auth';
-import { authRouter } from './routers/auth';
+import { authRouter, rootRouter } from './routers';
 import * as dotenv from 'dotenv';
 import { notFoundMiddleware, errorMiddleware } from './middlewares/error';
 import { Database } from './database';
 
 // load .env variables into process.env
 dotenv.config();
-
 
 const PORT = +process.env.PORT || +process.env.EXPRESS_PORT;
 const HOST = process.env.HOST || process.env.EXPRESS_HOST;
@@ -52,33 +50,11 @@ database
   const apiRouter = express.Router();
   app.use('/api/v1', apiRouter);
 
-  // main routes
-  const rootHandler = (req, res) => {
-    console.log('root route');
-    res.send({ message: 'Welcome to my API' });
-  };
-  apiRouter.get('/', rootHandler);
-
-  const privateHandler = (req, res) => {
-    console.log('private route');
-    res.send({ message: 'Welcome to private API' });
-  };
-  apiRouter.get('/private', authMiddleware, privateHandler);
-
-  const debugHandler = (req, res) => {
-    // tslint:disable-next-line:no-debugger
-    debugger;
-    res.send({});
-  };
-  apiRouter.get('/debug', debugHandler);
-
+  // root routes
+  apiRouter.use('/', rootRouter);
 
   // auth routes
   apiRouter.use('/auth', authRouter);
-
-  // other routes
-  // apiRouter.use('/user', userRouter);
-  // ...
 
 
   // HTTP REQUEST ERRORS
@@ -89,6 +65,12 @@ database
   const server = app.listen(PORT, HOST);
 
   // EXPRESS SERVER ERRORS
+  const closeServer = () => {
+    console.log('close express server');
+    server.close();
+    return database.disconnect().then(() => {}).catch(() => {});
+  };
+
   server.on('error', (err: any) => {
     switch (err.code) {
       case 'EACCES':
@@ -111,14 +93,6 @@ database
 
   // PROCESS EVENTS
   // gracefully stop the server in case of SIGINT (Ctrl + C) or SIGTERM (Process stopped)
-  const closeServer = () => {
-    console.log('close express server');
-    server.close();
-    // manager database connection
-    console.log('disconnect mongo');
-    return database.disconnect();
-  };
-
   process.on('SIGTERM', closeServer);
   process.on('SIGINT', closeServer);
 

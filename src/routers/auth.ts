@@ -18,7 +18,7 @@ const signinHandler = (req: Request, res: Response) => {
     res.send({ token });
   }
   else {
-    res.status(400).send({ error: true, message: 'Username or password incorrect' });
+    res.status(401).send({ error: true, message: 'Username or password incorrect' });
   }
 };
 
