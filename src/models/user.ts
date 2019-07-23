@@ -8,6 +8,18 @@ import {
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 
+
+// Schema property alidators
+export const validateAvatar = (avatar: string): boolean => {
+  return avatar.startsWith('http://') || avatar.startsWith('https://');
+};
+
+// Schema property setters
+export const setLuckyNumber = (value: number): number => {
+  return Math.floor(Math.abs(value));
+};
+
+
 // main interface
 export interface IUser {
   email: string;
@@ -15,6 +27,12 @@ export interface IUser {
   language: string;
   fullname: string;
   avatar: string;
+  luckyNumber: number;
+  homeLocation: {
+    lat: Number,
+    long: Number
+  };
+  journeys: string[];
 }
 
 // document interface, define custom methods here
@@ -28,28 +46,57 @@ interface IUserModel extends Model<IUserDoc> {
   hashPassword(password: string): string;
 }
 
-// scheam definition
+// schema definition
 const userSchema = new Schema<IUserDoc>({
   email: {
     type: String,
     required: true,
+    match: /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gim
   },
   password: {
     type: String,
-    required: true
+    required: true,
+    minLength: 59,
+    maxLength: 60,
   },
   language: {
     type: String,
-    required: true
+    required: true,
+    enum: ['fr', 'ge', 'en', 'it']
   },
   fullname: {
     type: String,
-    required: true
+    required: true,
+    minLength: 2,
+    maxLength: 100,
   },
   avatar: {
     type: String,
     required: true,
-    default: 'https://www.gravatar.com/avatar/default'
+    default: 'https://www.gravatar.com/avatar/default',
+    validate: [validateAvatar, 'Avatar must an uri']
+  },
+  luckyNumber: {
+    type: Number,
+    required: true,
+    set: setLuckyNumber
+  },
+  homeLocation: {
+    type: {
+      lat: {
+        type: Number,
+        required: true,
+      },
+      long: {
+        type: Number,
+        required: true
+      }
+    },
+    required: true
+  },
+  journeys: {
+    type: [String], // !!! <-- array type definition - String[] wont compile
+    required: true,
   }
 });
 // userSchema.index({ email: 1 }, { unique: true });
