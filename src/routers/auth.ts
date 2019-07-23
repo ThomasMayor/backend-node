@@ -23,3 +23,15 @@ const signinHandler = (req: Request, res: Response) => {
 };
 
 authRouter.post('/signin', signinHandler);
+
+const signupHandler = (req: Request, res: Response) => {
+  // 1. Validate user data
+  // 2. Create Model instance
+  // 3. Save and manage validation errors
+  // 4. Generate user token
+  // 5. Return complete user object with token
+};
+authRouter.post('/signup', signupHandler);
+
+
+
