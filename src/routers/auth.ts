@@ -43,18 +43,15 @@ const signupHandler = (req: Request, res: Response) => {
         res.status(400).send(httpError400('User already exists'));
         return;
       }
-      console.log('email is unique');
       // 3. Create Model instance using req. body
       const newUser = new UserModel(req.body);
       // 4. Hash password
       newUser.password = UserModel.hashPassword(password);
       // 5. Save and manage validation errors
-      console.log('before save');
       return newUser.save();
     })
     .then(user => {
       // 5. Generate user token
-      console.log('*****');
       const token = user.getToken();
       // 6. Return complete user object with token
       res.send({ user, error: false, token });
