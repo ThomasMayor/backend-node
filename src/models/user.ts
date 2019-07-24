@@ -79,6 +79,7 @@ const userSchema = new Schema<IUserDoc>({
   luckyNumber: {
     type: Number,
     required: true,
+    default: 7,
     set: setLuckyNumber
   },
   homeLocation: {
@@ -92,11 +93,13 @@ const userSchema = new Schema<IUserDoc>({
         required: true
       }
     },
-    required: true
+    required: true,
+    default: { lat: 0, long: 0 }
   },
   journeys: {
     type: [String], // !!! <-- array type definition - String[] wont compile
     required: true,
+    default: []
   }
 });
 // userSchema.index({ email: 1 }, { unique: true });
