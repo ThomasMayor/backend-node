@@ -2,6 +2,7 @@ version: '3'
 services:
   backend:
     build: .
+    image: nomades-course-july-2019
     ports:
       - "8080:8080"
     networks:
