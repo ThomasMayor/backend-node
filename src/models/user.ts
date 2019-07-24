@@ -130,6 +130,7 @@ userSchema.method('getToken', function (this: IUserDoc) {
   });
 });
 
+// override toJSON to remove password before sending response
 userSchema.method('toJSON', function (this: IUserDoc) {
   const obj = this.toObject();
   delete obj.password;
