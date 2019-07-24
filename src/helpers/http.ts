@@ -1,4 +1,4 @@
-const httpError = (status) => (message, err = undefined) => ({
+const httpError = (status: number, msg = '') => (message = msg, err = undefined) => ({
   error: true,
   err,
   status,
@@ -20,7 +20,7 @@ const httpError = (status) => (message, err = undefined) => ({
 //   return httpErrorFunction;
 //
 // };
-export const httpError500 = httpError(500);
+export const httpError500 = httpError(500, 'Internal Server Error');
 
 export const httpError400 = httpError(400);
 
