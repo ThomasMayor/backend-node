@@ -130,6 +130,12 @@ userSchema.method('getToken', function (this: IUserDoc) {
   });
 });
 
+userSchema.method('toJSON', function (this: IUserDoc) {
+  const obj = this.toObject();
+  delete obj.password;
+  return obj;
+});
+
 // Model custom static methods
 //
 // cannot use this here
