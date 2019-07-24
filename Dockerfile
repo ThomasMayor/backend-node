@@ -2,11 +2,13 @@ FROM node:12
 
 WORKDIR /usr/src/app
 
-COPY ./dist .
 COPY ./package.json .
 COPY ./package-lock.json .
 
 RUN npm install
+
+COPY ./dist .
+
 
 EXPOSE 8080
 
