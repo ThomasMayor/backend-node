@@ -105,13 +105,16 @@ const userSchema = new Schema<IUserDoc>({
   lastLogin: {
     type: Number,
     required: true,
+    min: 1000000000,
     default: Date.now // !!!! !== of Date.now(), Date.now() give to value once at execution time
                       // With Date.now, we assign a function, which will be callede each time we
                       // need the default value
   }
 });
-// userSchema.index({ email: 1 }, { unique: true });
-// userSchema.index({ email: 'hashed' });
+// index used for insert/update to ensure uniquness of email address
+userSchema.index({ email: 1 }, { unique: true });
+// index used for search by email, since we search for exact value
+userSchema.index({ email: 'hashed' });
 
 // Model custom methods
 //

@@ -1,9 +1,11 @@
 import * as express from 'express';
 import { Request, Response } from 'express';
-import * as jwt from 'jsonwebtoken';
-import { UserModel } from '../models/user';
-import { httpError500, httpError400, httpError401 } from '../helpers/http';
-import * as mongoose from 'mongoose';
+import { UserModel } from '../models';
+import {
+  httpError400,
+  httpError401,
+  mongoError
+} from '../helpers/http';
 
 export const authRouter = express.Router();
 
@@ -32,7 +34,7 @@ const signinHandler = (req: Request, res: Response) => {
       // 5. User successfully logged, return user and token
       .then(user => res.send({ user, token: user.getToken(), error: false }));
     })
-    .catch(err => res.status(500).send(httpError500(undefined, err)));
+    .catch(err => mongoError(err, res));
 };
 authRouter.post('/signin', signinHandler);
 
@@ -63,12 +65,7 @@ const signupHandler = (req: Request, res: Response) => {
       // 6. Return complete user object with token
       res.send({ user, error: false, token });
     })
-    .catch(err => {
-      if (err instanceof mongoose.Error.ValidationError)
-        res.status(400).send(httpError400('Validation error', err));
-      else
-        res.status(500).send(httpError500(undefined, err));
-    });
+    .catch(err => mongoError(err, res));
 };
 authRouter.post('/signup', signupHandler);
 

@@ -3,6 +3,7 @@ import { Mongoose } from 'mongoose';
 
 // remove deprecated warning
 mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
 
 export class Database {
   private db: Mongoose = mongoose; // mongoose is an instance of class Mongoose
