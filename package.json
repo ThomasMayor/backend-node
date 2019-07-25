@@ -9,7 +9,7 @@
     "mongo": "docker-compose up mongo",
     "debug": "tsc && node --inspect dist/index.js",
     "docker": "tsc && docker-compose build && docker-compose up",
-    "deploy": "tsc && docker-compose build backend && heroku container:push web && heroku container:release web"
+    "deploy": "tsc && docker-compose build backend && heroku container:push web --app nomades-course-july-2019 && heroku container:release web --app nomades-course-july-2019"
   },
   "author": "",
   "license": "ISC",
