@@ -23,8 +23,14 @@ const signinHandler = (req: Request, res: Response) => {
         res.status(401).send(httpError401('Wrong email or password'));
         return;
       }
-      // 4. User successfully logged, return user and token
-      res.send({ user, token: user.getToken(), error: false });
+      // 4. Update lastLogin
+      return UserModel.findByIdAndUpdate(
+        user._id, // what we update
+        { $set: { lastLogin: Date.now() } }, // update details
+        { new: true, runValidators: true } // update options: run validations and return modified document
+      )
+      // 5. User successfully logged, return user and token
+      .then(user => res.send({ user, token: user.getToken(), error: false }));
     })
     .catch(err => res.status(500).send(httpError500(undefined, err)));
 };

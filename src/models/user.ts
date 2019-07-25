@@ -33,6 +33,7 @@ export interface IUser {
     long: Number
   };
   journeys: string[];
+  lastLogin: number;
 }
 
 // document interface, define custom methods here
@@ -100,6 +101,13 @@ const userSchema = new Schema<IUserDoc>({
     type: [String], // !!! <-- array type definition - String[] wont compile
     required: true,
     default: []
+  },
+  lastLogin: {
+    type: Number,
+    required: true,
+    default: Date.now // !!!! !== of Date.now(), Date.now() give to value once at execution time
+                      // With Date.now, we assign a function, which will be callede each time we
+                      // need the default value
   }
 });
 // userSchema.index({ email: 1 }, { unique: true });
