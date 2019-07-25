@@ -9,15 +9,13 @@ export class Database {
   private db: Mongoose = mongoose; // mongoose is an instance of class Mongoose
 
   constructor(
-    private uri: string,
-    private user?: string,
-    private pass?: string,
+    private uri: string
   ) { }
 
   connect() {
     console.log('Connecting database to ' + this.uri);
     return this.db
-               .connect(this.uri, { useNewUrlParser: true, user: this.user, pass: this.pass })
+               .connect(this.uri, { useNewUrlParser: true })
                .then(mongooseConnected => {
                  console.log('Database connected to ' + this.uri);
                  return mongooseConnected;

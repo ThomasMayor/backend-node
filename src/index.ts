@@ -19,10 +19,7 @@ const PORT = +process.env.PORT || +process.env.EXPRESS_PORT;
 const HOST = process.env.HOST || process.env.EXPRESS_HOST;
 
 const MONGO_URI = process.env.MONGO_URI;
-const MONGO_USER = process.env.MONGO_USER;
-const MONGO_PASSWORD = process.env.MONGO_PASSWORD;
-
-const database: Database = new Database(MONGO_URI, MONGO_USER, MONGO_PASSWORD);
+const database: Database = new Database(MONGO_URI);
 database
 .connect()
 .then(_ => {
