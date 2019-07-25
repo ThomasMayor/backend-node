@@ -3,6 +3,7 @@ import * as mongoose from 'mongoose';
 import { Request, Response } from 'express';
 import { authMiddleware } from '../middlewares';
 import { PopulateModel } from '../models';
+import { ValidateId } from '../helpers';
 
 export const rootRouter = express.Router();
 
@@ -45,4 +46,14 @@ if (process.env.NODE_END !== 'production') {
     res.send({});
   };
   rootRouter.get('/test', testHandler);
+
+  const withParamHandler = (req: Request, res: Response) => {
+    const paramId = req.param('id');
+    // validate param value
+    if (!ValidateId(paramId))
+      res.status(400).send({error: true, message: 'Invalid :id path params'});
+    else
+      res.send({ param: paramId });
+  };
+  rootRouter.get('/mon/chemin/:id/test', withParamHandler);
 }
