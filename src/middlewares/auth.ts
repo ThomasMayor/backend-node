@@ -1,11 +1,16 @@
 import { Request, Response } from 'express';
 import * as  jwt from 'jsonwebtoken';
 
-export const authMiddleware = (req: Request, res: Response, next) => {
+export interface AuthenticatedRequest extends Request {
+  tokenContent?: { user: any };
+}
+
+export const authMiddleware = (req: AuthenticatedRequest, res: Response, next) => {
   const token = req.header('Authorization');
 
   try {
-    jwt.verify(token, process.env.JWT_SECRET);
+    const content: any = jwt.verify(token, process.env.JWT_SECRET);
+    req.tokenContent = content;
     // token valid & not expired
     next();
   }
