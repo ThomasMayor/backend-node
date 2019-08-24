@@ -6,6 +6,7 @@ import {
   httpError401,
   mongoError
 } from '../helpers/http';
+import { authMiddleware, AuthenticatedRequest } from '../middlewares';
 
 export const authRouter = express.Router();
 
@@ -14,7 +15,7 @@ const signinHandler = (req: Request, res: Response) => {
 
   // 1. Validate missing data
   if (!email || !password)
-    return res.status(401).send(httpError401('Email or password are missing'));
+    return res.status(400).send(httpError400('Email or password are missing'));
 
   // 2. Get user by email
   UserModel
@@ -22,7 +23,7 @@ const signinHandler = (req: Request, res: Response) => {
     .then(user => {
       // and 3. validate password
       if (!user || !user.comparePassword(password)) {
-        res.status(401).send(httpError401('Wrong email or password'));
+        res.status(400).send(httpError400('Wrong email or password'));
         return;
       }
       // 4. Update lastLogin
@@ -69,5 +70,7 @@ const signupHandler = (req: Request, res: Response) => {
 };
 authRouter.post('/signup', signupHandler);
 
-
-
+const whoAmIHandler = (req: AuthenticatedRequest, res: Response) => {
+  res.send({ user: req.tokenContent.user });
+};
+authRouter.get('/whoami', authMiddleware, whoAmIHandler);
